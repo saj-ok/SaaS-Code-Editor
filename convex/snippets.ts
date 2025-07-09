@@ -3,34 +3,34 @@ import { mutation, query } from "./_generated/server";
 
 
 export const createSnippet = mutation({
-      args: {
-            title: v.string(),
-            language: v.string(),
-            code: v.string(),
-      },
-      handler: async (ctx, args) => {
-            // check user is authenticated or not
-            const identity = await ctx.auth.getUserIdentity();
-            if (!identity) {
-                  throw new ConvexError("You must be logged in to save an execution");
-            }
-            const user = await ctx.db
-                  .query("users")
-                  .withIndex("by_user_id")
-                  .filter((q) => q.eq(q.field("userId"), identity.subject))
-                  .first();
-            if (!user) {
-                  throw new ConvexError("User does not exist");
-            }
-            const snippetId = await ctx.db.insert("snippets", {
-                  userId: identity.subject,
-                  userName: user.name,
-                  title: args.title,
-                  language: args.language,
-                  code: args.code,
-            })
-            return snippetId;
-      }
+  args: {
+    title: v.string(),
+    language: v.string(),
+    code: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // check user is authenticated or not
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("You must be logged in to save an execution");
+    }
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_user_id")
+      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .first();
+    if (!user) {
+      throw new ConvexError("User does not exist");
+    }
+    const snippetId = await ctx.db.insert("snippets", {
+      userId: identity.subject,
+      userName: user.name,
+      title: args.title,
+      language: args.language,
+      code: args.code,
+    })
+    return snippetId;
+  }
 });
 
 export const deleteSnippet = mutation({
@@ -102,11 +102,34 @@ export const starSnippet = mutation({
 });
 
 export const getSnippets = query({
-      handler:async(ctx)=>{
-         const snippets=await ctx.db.query('snippets').order('desc').collect();
-         return snippets;       
-      }
+  handler: async (ctx) => {
+    const snippets = await ctx.db.query('snippets').order('desc').collect();
+    return snippets;
+  }
 })
+
+export const getSnippetById = query({
+  args: { snippetId: v.id("snippets") },
+  handler: async (ctx, args) => {
+    const snippet = await ctx.db.get(args.snippetId);
+    if (!snippet) throw new Error("Snippet not found");
+
+    return snippet;
+  },
+});
+
+export const getComments = query({
+  args: {snippetsID: v.id("snippets")},
+  handler: async(ctx, args)=>{
+      const comments = await ctx.db             
+                              .query("snippetComments")
+                              .withIndex("by_snippet_id")
+                              .filter((q)=>q.eq(q.field("snippetId"),args.snippetsID))
+                              .order("desc")
+                              .collect();
+      return comments;
+  }
+});
 
 export const isSnippetStarred = query({
   args: {
