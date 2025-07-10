@@ -1,5 +1,6 @@
 
-## CodeNexta - A Next.js-based onlie SaaS platform for developers to collaborate and share their code snippets.
+## CodeNexta 
+   A Next.js-based online code editor SaaS platform for developers to collaborate and share their code snippets.
 
 ---
  ## Highlights:
