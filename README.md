@@ -17,3 +17,10 @@
   - ⚙️ Customizable font size controls
   - 🔗 Webhook integration support
   - 🌟 Professional deployment walkthrough
+
+
+  ---
+## Demo link:- https://fitness-trainer-ai.vercel.app/
+
+
+---
