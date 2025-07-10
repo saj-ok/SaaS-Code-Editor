@@ -8,6 +8,7 @@ import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
 import RunButton from "./RunButton";
 import HeaderProfileBtn from "./HeaderProfileBtn";
+import Image from "next/image";
 
 async function Header() {
   const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -37,12 +38,19 @@ async function Header() {
               className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] p-2 rounded-xl ring-1
               ring-white/10 group-hover:ring-white/20 transition-all"
             >
-              <Blocks className="size-6 text-blue-400 transform -rotate-6 group-hover:rotate-0 transition-transform duration-500" />
+              <Image
+                src="/logo.png"
+                alt="CodeNexta Logo"
+                width={40} 
+                height={40} 
+                className=" text-blue-400 transform -rotate-45 group-hover:rotate-0 transition-transform duration-500"
+              />
+
             </div>
 
             <div className="flex flex-col">
               <span className="block text-lg font-semibold bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">
-                CodeCraft
+                CodeNexta
               </span>
               <span className="block text-xs text-blue-400/60 font-medium">
                 Interactive Code Editor

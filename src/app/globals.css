@@ -21,3 +21,28 @@ body {
 button:hover{
     cursor:pointer;
 }
+
+
+/* Apply universally */
+/* Firefox: only thumb, no visible track */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #687FE5 transparent;
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #687FE5;
+  border-radius: 5px;
+  border: 2px solid transparent; /* for spacing from edges */
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5a6fd2; /* slightly darker on hover */
+}
