@@ -20,7 +20,7 @@
 
 
   ---
-## Demo link:- https://fitness-trainer-ai.vercel.app/
+## Demo link:- https://codenexta.vercel.app/
 
 
 ---
