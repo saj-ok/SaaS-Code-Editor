@@ -9,7 +9,6 @@ import NavigationHeader from "@/components/NavigationHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Code, Grid, Layers, Search, Tag, X } from "lucide-react";
 import SnippetCard from "./_components/SnippetCard";
-
 function SnippetsPage() {
   const snippets = useQuery(api.snippets.getSnippets);
   const [searchQuery, setSearchQuery] = useState("");

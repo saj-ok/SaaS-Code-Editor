@@ -1,4 +1,3 @@
-import { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { Id } from "../../convex/_generated/dataModel";
 
