@@ -5,6 +5,8 @@ import { AlertTriangle, CheckCircle, Clock, Copy, Terminal } from "lucide-react"
 import { useState } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import toast from "react-hot-toast";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import LoginButton from "@/components/LoginButton";
 
 function OutputPanel() {
   const { output, error, isRunning } = useCodeEditorStore();
@@ -59,7 +61,8 @@ function OutputPanel() {
           className="relative bg-[#1e1e2e]/50 backdrop-blur-sm border border-[#313244] 
         rounded-xl p-4 h-[600px] overflow-auto font-mono text-sm"
         >
-          {isRunning ? (
+          <SignedIn>
+            {isRunning ? (
             <RunningCodeSkeleton />
           ) : error ? (
             <div className="flex items-start gap-3 text-red-400">
@@ -85,6 +88,13 @@ function OutputPanel() {
               <p className="text-center">Run your code to see the output here...</p>
             </div>
           )}
+          </SignedIn>
+          <SignedOut>
+            <div className="h-full flex flex-col items-center justify-center text-gray-400">
+              <p className="text-center mb-5 ">Sign in to Run your code and see the output here...</p>
+               <LoginButton  />
+            </div>
+          </SignedOut>
         </div>
       </div>
     </div>
