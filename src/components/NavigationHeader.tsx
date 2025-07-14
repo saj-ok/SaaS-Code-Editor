@@ -1,4 +1,5 @@
-import HeaderProfileBtn from "@/app/(root)/_components/HeaderProfileBtn";
+
+import HeaderProfileBtn from "@/app/editor/_components/HeaderProfileBtn";
 import { SignedOut } from "@clerk/nextjs";
 import {Code2, Sparkles } from "lucide-react";
 import Image from "next/image";
