@@ -1,13 +1,13 @@
 
 import HeaderProfileBtn from "@/app/editor/_components/HeaderProfileBtn";
-import { SignedOut } from "@clerk/nextjs";
-import {Code2, Sparkles } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import {Blocks, Code2, Sparkles, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 function NavigationHeader() {
   return (
-    <div className="sticky top-0 z-50 w-full border-b border-gray-800/50 bg-gray-950/80 backdrop-blur-xl backdrop-saturate-150">
+    <div className="sticky top-0 z-50 py-2 rounded-b-4xl w-full border-b border-gray-800/50 bg-gray-950/50 backdrop-blur-xl backdrop-saturate-150">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
       <div className="max-w-7xl mx-auto px-4">
         <div className="relative h-16 flex items-center justify-between">
@@ -43,8 +43,11 @@ function NavigationHeader() {
                 </span>
               </div>
             </Link>
+          </div>
 
-            {/* snippets Link */}
+          {/* right rection */}
+          <div className="flex items-center gap-8">
+             {/* snippets Link */}
             <Link
               href="/snippets"
               className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
@@ -59,10 +62,41 @@ function NavigationHeader() {
                 Snippets
               </span>
             </Link>
-          </div>
+            
+              {/* editor Link */}
+            <Link
+              href="/editor"
+              className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+              border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
+            >
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-blue-500/10 
+              to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+              <Blocks className="w-4 h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+              <span className="text-sm font-medium relative z-10 group-hover:text-white transition-colors">
+                Editor
+              </span>
+            </Link>
+             
+               {/* profile Link */}
+           <SignedIn>
+             <Link
+              href="/profile"
+              className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 
+              border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
+            >
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-blue-500/10 
+              to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+              <User className="w-4 h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+              <span className="text-sm font-medium relative z-10 group-hover:text-white transition-colors">
+                Profile
+              </span>
+            </Link>
+           </SignedIn>
 
-          {/* right rection */}
-          <div className="flex items-center gap-4">
             <SignedOut>
               <Link
                 href="/pricing"
