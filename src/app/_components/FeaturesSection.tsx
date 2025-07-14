@@ -10,7 +10,6 @@ import {
   Sparkles,
   Terminal,
   Globe,
-  Layers
 } from "lucide-react";
 import Image from "next/image";
 
