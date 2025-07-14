@@ -1,48 +1,48 @@
-@import "tailwindcss";
+  @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
+  }
 
-button:hover{
-    cursor:pointer;
-}
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  button:hover{
+      cursor:pointer;
+  }
 
 
-/* Apply universally */
-/* Firefox: only thumb, no visible track */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #687FE5 transparent;
-}
+  /* Apply universally */
+  /* Firefox: only thumb, no visible track */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #687FE5 transparent;
+  }
 
-/* WebKit browsers (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #687FE5;
-  border-radius: 5px;
-  border: 2px solid transparent; /* for spacing from edges */
-  background-clip: content-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #5a6fd2; /* slightly darker on hover */
-}
+  /* WebKit browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #687FE5;
+    border-radius: 5px;
+    border: 2px solid transparent; /* for spacing from edges */
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5a6fd2; /* slightly darker on hover */
+  }
