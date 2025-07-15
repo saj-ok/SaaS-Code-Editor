@@ -13,8 +13,6 @@ function TestimonialsSection() {
   const feedbacks = useQuery(api.feedback.getAllFeedback);
 
   const settings = {
-    className: "center",
-    centerMode: true,
     dots: true,
     infinite: true,
     speed: 500,
@@ -23,12 +21,15 @@ function TestimonialsSection() {
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
+    centerMode: false,
+    variableWidth: false,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
+          centerMode: false,
         }
       },
       {
@@ -36,7 +37,6 @@ function TestimonialsSection() {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          dots: true,
           centerMode: false,
         }
       }
@@ -83,59 +83,73 @@ function TestimonialsSection() {
 
         {/* Testimonials Slider */}
         <div className="mb-16">
-          <div className="slider-container max-w-6xl mx-auto">
-            <style>{`
-              .slick-slide > div {
+          <div className="testimonials-slider-container">
+            <style jsx>{`
+              .testimonials-slider-container .slick-list {
+                margin: 0 -12px;
+              }
+              
+              .testimonials-slider-container .slick-slide {
                 padding: 0 12px;
               }
               
-              .slick-dots {
+              .testimonials-slider-container .slick-slide > div {
+                height: 100%;
+              }
+              
+              .testimonials-slider-container .slick-track {
+                display: flex;
+                align-items: stretch;
+              }
+              
+              .testimonials-slider-container .slick-slide > div > div {
+                height: 100%;
+              }
+              
+              .testimonials-slider-container .slick-dots {
                 bottom: -60px;
               }
               
-              .slick-dots li button:before {
+              .testimonials-slider-container .slick-dots li button:before {
                 color: #6b7280;
                 font-size: 12px;
                 opacity: 0.5;
               }
               
-              .slick-dots li.slick-active button:before {
+              .testimonials-slider-container .slick-dots li.slick-active button:before {
                 color: #3b82f6;
                 opacity: 1;
               }
               
-              .slick-center .testimonial-card {
-                transform: scale(1.05);
-                border-color: rgba(59, 130, 246, 0.3);
-                box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
-              }
-              
               @media (max-width: 768px) {
-                .slick-slide > div {
+                .testimonials-slider-container .slick-list {
+                  margin: 0 -8px;
+                }
+                .testimonials-slider-container .slick-slide {
                   padding: 0 8px;
                 }
-                .slick-dots {
+                .testimonials-slider-container .slick-dots {
                   bottom: -40px;
                 }
               }
             `}</style>
 
             <Slider {...settings}>
-              {feedbacks?.map((feedback, index) => (
+              {feedbacks?.map((feedback) => (
                 <div key={feedback._id}>
-                  <div className="testimonial-card bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50 hover:border-blue-500/30 transition-all duration-500 h-[320px] flex flex-col relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50 hover:border-blue-500/30 transition-all duration-300 h-[380px] flex flex-col relative overflow-hidden group">
                     
                     {/* Subtle background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     {/* Header: Stars and Quote */}
-                    <div className="flex items-start justify-between mb-4 relative z-10">
+                    <div className="flex items-start justify-between mb-6 relative z-10">
                       {/* Stars */}
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-4 h-4 transition-all duration-300 ${
+                            className={`w-5 h-5 transition-all duration-300 ${
                               i < feedback.rating
                                 ? 'text-yellow-400 fill-yellow-400'
                                 : 'text-gray-600'
@@ -145,12 +159,14 @@ function TestimonialsSection() {
                       </div>
                       
                       {/* Quote Mark */}
-                      <Quote className="w-8 h-8 text-gray-600/40 transform rotate-180" />
+                      <div className="text-6xl font-bold text-gray-600/20 leading-none">
+                        "
+                      </div>
                     </div>
 
                     {/* Feedback Content */}
-                    <div className="flex-1 mb-6 relative z-10">
-                      <p className="text-gray-300 text-base leading-relaxed line-clamp-4">
+                    <div className="flex-grow mb-6 relative z-10">
+                      <p className="text-gray-300 text-base leading-relaxed">
                         "{feedback.content}"
                       </p>
                     </div>
@@ -170,17 +186,17 @@ function TestimonialsSection() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-semibold text-sm truncate group-hover:text-blue-300 transition-colors duration-300">
+                        <h3 className="text-white font-semibold text-base truncate group-hover:text-blue-300 transition-colors duration-300">
                           {feedback.userName}
                         </h3>
-                        <p className="text-gray-400 text-xs truncate">
+                        <p className="text-gray-400 text-sm truncate">
                           {feedback.userRole || 'Developer'}
                         </p>
                       </div>
                     </div>
 
                     {/* Hover effect border */}
-                    <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-blue-500/20 transition-colors duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-blue-500/20 transition-colors duration-300 pointer-events-none" />
                   </div>
                 </div>
               ))}
