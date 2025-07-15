@@ -1,66 +1,51 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star, Zap } from "lucide-react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import Slider from "react-slick";
 
-const TESTIMONIALS = [
-  {
-    name: "Sarah Chen",
-    role: "Full Stack Developer",
-    company: "TechCorp",
-    content: "CodeNexta has revolutionized my development workflow. The multi-language support and real-time collaboration features are game-changers. I can prototype ideas faster than ever before.",
-    rating: 5,
-    avatar: "SC",
-    delay: 0.1
-  },
-  {
-    name: "Marcus Rodriguez",
-    role: "Software Engineer",
-    company: "StartupXYZ",
-    content: "The AI-powered code suggestions in CodeNexta are incredibly accurate. It's like having a senior developer pair programming with me 24/7. The learning curve was practically non-existent.",
-    rating: 5,
-    avatar: "MR",
-    delay: 0.2
-  },
-  {
-    name: "Emily Johnson",
-    role: "Computer Science Student",
-    company: "MIT",
-    content: "As a student, CodeNexta has been invaluable for my coursework. The ability to quickly switch between languages and share code with classmates has made group projects so much easier.",
-    rating: 5,
-    avatar: "EJ",
-    delay: 0.3
-  },
-  {
-    name: "David Kim",
-    role: "DevOps Engineer",
-    company: "CloudTech",
-    content: "The deployment integration and CI/CD features in CodeNexta Pro are outstanding. I can go from idea to production faster than with any other platform I've used.",
-    rating: 5,
-    avatar: "DK",
-    delay: 0.4
-  },
-  {
-    name: "Lisa Wang",
-    role: "Frontend Developer",
-    company: "DesignStudio",
-    content: "The themes and customization options are beautiful. CodeNexta doesn't just work well - it looks amazing too. The VS Code-like experience but in the browser is perfect.",
-    rating: 5,
-    avatar: "LW",
-    delay: 0.5
-  },
-  {
-    name: "Alex Thompson",
-    role: "Tech Lead",
-    company: "InnovateLab",
-    content: "We've adopted CodeNexta for our entire team. The collaboration features and code sharing capabilities have improved our code review process significantly. Highly recommended!",
-    rating: 5,
-    avatar: "AT",
-    delay: 0.6
-  }
-];
 
 function TestimonialsSection() {
+  
+  const feedbacks = useQuery(api.feedback.getAllFeedback);
+
+   const settings = {
+    className: "center",
+    centerMode: true,
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 1500,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: true,
+          centerMode: false,
+        }
+      }
+    ]
+  };
+
+
+
   return (
     <section className="relative py-16 overflow-hidden">
       {/* Background */}
@@ -100,53 +85,117 @@ function TestimonialsSection() {
         </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: testimonial.delay }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="group relative"
-            >
-              <div className="relative h-full p-8 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300">
-                {/* Quote Icon */}
-                <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Quote className="w-8 h-8 text-white" />
-                </div>
+        <div className="mb-16">
+          <div className="slider-container max-w-8xl mx-auto ">
+            <style>{`
+              .slick-slide > div {
+                padding: 0 12px;
+              }
+              
+              .slick-dots {
+                bottom: -50px;
+              }
+              
+              .slick-dots li button:before {
+                color: white;
+                font-size: 12px;
+              }
+              
+              .slick-dots li.slick-active button:before {
+                color: #fff;
+              }
+              
+              @media (max-width: 768px) {
+                .slick-slide > div {
+                  padding: 0 8px;
+                }
+              }
+           /* Center-slide hover effect */
+              .slick-center .glass {
+                transform: scale(1.05);
+                --tw-shadow-color: rgba(147,197,253,0.3);
+                box-shadow:
+                  0 10px 15px -3px var(--tw-shadow-color),
+                  0 4px 6px -2px var(--tw-shadow-color);
+                transition: all 0.5s;
+              }
+              .slick-center .glass .bg-gradient-to-br { opacity: 1; }
+              .slick-center .glass .absolute.top-0 { transform: scaleX(1); }
+            `}</style>
 
-                {/* Rating */}
-                <div className="flex items-center gap-1 mb-6">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
+            <Slider {...settings} >
+              {feedbacks?.map((feedback, index) => (
+                <div key={feedback._id} >
+                  <div
+                    className="h-[550px] md:h-[530px] mx-1 md:mx-5 my-6 glass hover:shadow-glow group animate-slide-up hover:scale-105 hover:shadow-lg hover:shadow-blue-300/30 transition-all duration-500 relative overflow-hidden rounded-xl"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {/* Background gradients */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
 
-                {/* Content */}
-                <p className="text-gray-300 leading-relaxed mb-8 relative z-10">
-                  "{testimonial.content}"
-                </p>
+                    {/* Card content wrapper */}
+                    <div className="p-6 relative z-10 flex flex-col h-full">
+                      {/* Main content grows */}
+                      <div className="flex-grow">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={` md:w-7 md:h-7  transition-colors duration-200 ${i < feedback.rating
+                                  ? 'text-amber-400 fill-amber-400'
+                                  : 'text-muted-foreground/30'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
 
-                {/* Author */}
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
-                    {testimonial.avatar}
+                        <div className="flex items-center gap-5 mb-6">
+                          <div className="relative">
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-3 border-background shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                              <img
+                                src={feedback.userProfileUrl}
+                                alt={feedback.userName}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full border-3 border-background flex items-center justify-center shadow-lg">
+                              <Zap className="w-3 h-3 text-white" />
+                            </div>
+                          </div>
+
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">
+                              {feedback.userName}
+                            </h3>
+                          </div>
+                        </div>
+                        <div className=" pt-4 relative border-t border-border">
+                          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <p className="max-w-prose text-justify hyphens-auto text-muted-foreground leading-relaxed relative z-10 p-2 group-hover:text-foreground transition-colors duration-300">
+                              "{feedback.content}"
+                            </p>
+                          </div>
+                        </div>
+                      </div> 
+                    </div>
+
+                    {/* Decorative pings */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                      <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-primary rounded-full animate-ping"></div>
+                      <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-secondary rounded-full animate-ping delay-300"></div>
+                      <div className="absolute top-1/2 right-1/3 w-0.5 h-0.5 bg-accent rounded-full animate-ping delay-600"></div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-white font-semibold">{testimonial.name}</h4>
-                    <p className="text-gray-400 text-sm">
-                      {testimonial.role} at {testimonial.company}
-                    </p>
-                  </div>
                 </div>
-
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-300" />
-              </div>
-            </motion.div>
-          ))}
+              ))}
+            </Slider>
+          </div>
         </div>
       </div>
     </section>
