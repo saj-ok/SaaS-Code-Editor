@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Slider from "react-slick";
+import TestimonialsLoadingSkeleton from "./TestimonialsLoadingSkeleton";
 
 function TestimonialsSection() {
   
@@ -42,6 +43,22 @@ function TestimonialsSection() {
       }
     ]
   };
+  
+    // Show loading skeleton while feedbacks are being fetched
+  if (feedbacks === undefined) {
+    return <TestimonialsLoadingSkeleton />;
+  }
+
+  // Show empty state or fallback if no feedbacks
+  if (!feedbacks || feedbacks.length === 0) {
+    return (
+      <section className="relative py-16 overflow-hidden">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+          <p className="text-gray-400">No testimonials available at the moment.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative py-16 overflow-hidden">
@@ -137,7 +154,7 @@ function TestimonialsSection() {
             <Slider {...settings}>
               {feedbacks?.map((feedback) => (
                 <div key={feedback._id}>
-                  <div className="mx-5 bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50 hover:border-blue-500/30 transition-all duration-300 h-[380px] flex flex-col relative overflow-hidden group">
+                  <div className="mx-5 bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50 hover:border-blue-500/30 transition-all duration-300 h-[410px] flex flex-col relative overflow-hidden group">
                     
                     {/* Subtle background glow */}
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -159,14 +176,14 @@ function TestimonialsSection() {
                       </div>
                       
                       {/* Quote Mark */}
-                      <div className="text-6xl font-bold text-gray-600/20 leading-none">
-                        "
+                      <div className="text-6xl  font-bold text-gray-600 leading-none">
+                        <Quote/>
                       </div>
                     </div>
 
                     {/* Feedback Content */}
-                    <div className="flex-grow mb-6 relative z-10">
-                      <p className="text-gray-300 text-base leading-relaxed">
+                    <div className=" hover:cursor-pointer glassf bg-gradient-to-r from-primary/5 to-secondary/5 px-3 py-2 h-auto rounded-xl flex-grow mb-6 relative z-10 transition-all duration-300">
+                      <p className="text-gray-300  text-base leading-relaxed max-w-prose text-justify hyphens-auto ">
                         "{feedback.content}"
                       </p>
                     </div>
@@ -181,8 +198,7 @@ function TestimonialsSection() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        {/* Online indicator */}
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 rounded-full border-2 border-[#12121a]" />
+                        
                       </div>
 
                       <div className="flex-1 min-w-0">
