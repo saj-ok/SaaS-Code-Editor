@@ -21,6 +21,8 @@ const LANGUAGES = [
   { name: "Rust", icon: "/rust.png", color: "bg-orange-600/20" },
   { name: "C++", icon: "/cpp.png", color: "bg-blue-700/20" },
   { name: "C#", icon: "/csharp.png", color: "bg-purple-500/20" },
+  { name: "Ruby", icon: "/ruby.png", color: "bg-red-600/20" },
+  { name: "Swift", icon: "/swift.png", color: "bg-orange-500/20" },
 ];
 
 function FeaturesSection() {
