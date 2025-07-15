@@ -7,12 +7,14 @@ import { api } from "../../../convex/_generated/api";
 import NavigationHeader from "@/components/NavigationHeader";
 import ProfileHeader from "./_components/ProfileHeader";
 import ProfileHeaderSkeleton from "./_components/ProfileHeaderSkeleton";
-import { ChevronRight, Clock, Code, ListVideo, Loader2, Star } from "lucide-react";
+import { BookOpenCheck, ChevronRight, Clock, Code, ListVideo, Loader2, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
 import CodeBlock from "./_components/CodeBlock";
+import FeedBackFrom from "./_components/FeedBackFrom";
+
 
 const TABS = [
   {
@@ -25,12 +27,17 @@ const TABS = [
     label: "Starred Snippets",
     icon: Star,
   },
+  {
+    id: "feedback",
+    label: "Feedbacks",
+    icon: BookOpenCheck,
+  }
 ];
 
 function ProfilePage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"executions" | "starred">("executions");
+  const [activeTab, setActiveTab] = useState<"executions" | "starred" | "feedback" >("executions");
 
   const userStats = useQuery(api.codeExecutions.getUserStats, {
     userId: user?.id ?? "",
@@ -79,11 +86,11 @@ function ProfilePage() {
         >
           {/* Tabs */}
           <div className="border-b border-gray-800/50">
-            <div className="flex space-x-1 p-4">
+            <div className="flex space-x-4 p-4">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "executions" | "starred")}
+                  onClick={() => setActiveTab(tab.id as "executions" | "starred" | "feedback")}
                   className={`group flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-200 relative overflow-hidden ${
                     activeTab === tab.id ? "text-blue-400" : "text-gray-400 hover:text-gray-300"
                   }`}
@@ -116,7 +123,7 @@ function ProfilePage() {
               transition={{ duration: 0.2 }}
               className="p-6"
             >
-              {/* ACTIVE TAB IS EXECUTIONS: */}
+          
               {activeTab === "executions" && (
                 <div className="space-y-6">
                   {executions?.map((execution) => (
@@ -215,7 +222,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* ACTIVE TAB IS STARS: */}
               {activeTab === "starred" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {starredSnippets?.map((snippet) => (
@@ -286,6 +292,9 @@ function ProfilePage() {
                   )}
                 </div>
               )}
+              
+              {activeTab === "feedback" && <FeedBackFrom/>}
+
             </motion.div>
           </AnimatePresence>
         </div>
