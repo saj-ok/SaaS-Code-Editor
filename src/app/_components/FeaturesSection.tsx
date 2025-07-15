@@ -2,61 +2,15 @@
 
 import { motion } from "framer-motion";
 import { 
-  Code2, 
-  Palette, 
-  Zap, 
-  Users, 
-  Shield, 
-  Sparkles,
+ 
   Terminal,
   Globe,
 } from "lucide-react";
 import Image from "next/image";
+import FeatureGrids from "./FeatureGrids";
 
-const FEATURES = [
-  {
-    icon: Code2,
-    title: "Multi-Language Support",
-    description: "Write and execute code in JavaScript, Python, Java, C++, Go, Rust, and more.",
-    gradient: "from-blue-500 to-cyan-500",
-    delay: 0.1
-  },
-  {
-    icon: Palette,
-    title: "Beautiful Themes",
-    description: "Choose from 5 carefully crafted themes including VS Dark, GitHub Dark, and Monokai.",
-    gradient: "from-purple-500 to-pink-500",
-    delay: 0.2
-  },
-  {
-    icon: Zap,
-    title: "Lightning Fast",
-    description: "Instant code execution with our optimized runtime environment and caching.",
-    gradient: "from-yellow-500 to-orange-500",
-    delay: 0.3
-  },
-  {
-    icon: Users,
-    title: "Community Driven",
-    description: "Share code snippets, collaborate with developers, and learn from the community.",
-    gradient: "from-green-500 to-emerald-500",
-    delay: 0.4
-  },
-  {
-    icon: Shield,
-    title: "Secure & Private",
-    description: "Your code is protected with enterprise-grade security and privacy controls.",
-    gradient: "from-red-500 to-rose-500",
-    delay: 0.5
-  },
-  {
-    icon: Sparkles,
-    title: "AI-Powered",
-    description: "Get intelligent code suggestions and error detection powered by advanced AI.",
-    gradient: "from-indigo-500 to-purple-500",
-    delay: 0.6
-  }
-];
+
+
 
 const LANGUAGES = [
   { name: "JavaScript", icon: "/javascript.png", color: "bg-yellow-500/20" },
@@ -109,37 +63,7 @@ function FeaturesSection() {
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
-          {FEATURES.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: feature.delay }}
-              viewport={{ once: true }}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="group relative"
-            >
-              <div className="relative h-full p-8 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300">
-                {/* Hover Glow Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`} />
-                
-                {/* Icon */}
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-r ${feature.gradient} bg-opacity-10 mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className="w-7 h-7 text-white" />
-                </div>
-                
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-white mb-4 group-hover:text-blue-300 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          <FeatureGrids/>
 
         {/* Language Support Section */}
         <motion.div
@@ -172,9 +96,9 @@ function FeaturesSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.1, y: -5 }}
-                className="group relative"
+                className="group relative language-card"
               >
-                <div className={`relative p-4 rounded-2xl ${lang.color} backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300`}>
+                <div className={`relative p-4 rounded-2xl ${lang.color} backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 z-10`}>
                   <Image
                     src={lang.icon}
                     alt={lang.name}
