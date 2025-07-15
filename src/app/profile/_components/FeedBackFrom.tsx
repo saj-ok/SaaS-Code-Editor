@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
+const MAX_CHARACTERS = 340;
+
 function FeedBackFrom() {
   const [text, setText] = useState("");
   const [role, setRole] = useState("");
@@ -35,11 +37,40 @@ function FeedBackFrom() {
   const deleteFeedback = useMutation(api.feedback.deleteFeedbackById);
   const updateFeedback = useMutation(api.feedback.updateFeedbackById);
 
+  // Character count helpers
+  const remainingChars = MAX_CHARACTERS - text.length;
+  const editRemainingChars = MAX_CHARACTERS - editText.length;
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    if (newText.length <= MAX_CHARACTERS) {
+      setText(newText);
+    }
+  };
+
+  const handleEditTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    if (newText.length <= MAX_CHARACTERS) {
+      setEditText(newText);
+    }
+  };
+
+  const getCharacterCountColor = (remaining: number) => {
+    if (remaining < 20) return 'text-red-400';
+    if (remaining < 50) return 'text-yellow-400';
+    return 'text-gray-400';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (rating === 0) {
       toast.error("Please provide a rating");
+      return;
+    }
+
+    if (!text.trim()) {
+      toast.error("Please provide feedback content");
       return;
     }
 
@@ -111,7 +142,7 @@ function FeedBackFrom() {
       handleCancelEdit();
     } catch (error) {
       console.log(error);
-      toast.error(error instanceof Error ? error.message : "Failed to update feedback");
+      toast.error("Failed to update feedback");
     } finally {
       setIsUpdating(false);
     }
@@ -120,23 +151,23 @@ function FeedBackFrom() {
 
   return (
     <div className='space-y-6 mt-8'>
-      <div className='glass rounded-2xl p-6'>
+      <div className='bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50'>
         <div className='flex items-center justify-between mb-6'>
           <div>
-            <h2 className='text-2xl font-bold'>Share Your Experience</h2>
-            <p className='text-muted-foreground'>
+            <h2 className='text-2xl font-bold text-white'>Share Your Experience</h2>
+            <p className='text-gray-400'>
               We value your feedback to improve our application.
             </p>
           </div>
-          <div className='flex items-center gap-2 px-3 py-2 glass rounded-full'>
+          <div className='flex items-center gap-2 px-3 py-2 bg-[#1e1e2e]/80 rounded-full border border-gray-800/50'>
             <Star className='w-4 h-4 text-yellow-500 fill-yellow-500' />
-            <span className='text-sm font-medium'>Feedback</span>
+            <span className='text-sm font-medium text-gray-300'>Feedback</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
           <div className='space-y-2'>
-            <Label className='font-semibold text-foreground'>Rate your experience</Label>
+            <Label className='font-semibold text-white'>Rate your experience</Label>
             <div className='flex items-center  gap-32'>
               <div className='flex items-center gap-1'>
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -151,14 +182,14 @@ function FeedBackFrom() {
                     <Star
                       className={`w-8 h-8 ${star <= (hoverRating || rating)
                         ? 'text-yellow-500 fill-yellow-500'
-                        : 'text-gray-300 fill-gray-300'
+                        : 'text-gray-600 fill-gray-600'
                         }`}
                       strokeWidth={1.5}
                     />
                   </button>
                 ))}
               </div>
-              <div className={`glass p-2 rounded-4xl flex justify-between ${rating < 3 ? "animate-pulse" : "animate-bounce"} text-muted-foreground`}>
+              <div className={`glass border  p-2 rounded-xl flex justify-between ${rating < 3 ? "animate-pulse" : "animate-bounce"} text-gray-400`}>
                 <span>
                   {["😒Very dissatisfied", "😞Dissatisfied", "🙂Neutral", "😊Satisfied", "🤗Very satisfied"][rating - 1] || ""}
                 </span>
@@ -167,34 +198,53 @@ function FeedBackFrom() {
           </div>
            
           <div className='space-y-2'>
-            <Label htmlFor='role' className='font-semibold text-foreground' ></Label>
+            <Label htmlFor='role' className='font-semibold text-white'>Role</Label>
             <Input
              id='role'
              value={role}
              onChange={(e)=>setRole(e.target.value)}
              placeholder='are you a student or expert? if expert then write you position with company name.'
-             className='bg-background/80'
+             className='bg-[#1e1e2e]/80 border-gray-800/50 text-white placeholder:text-gray-500'
             />
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor="feedback-text" className='font-semibold text-foreground'>
-              Tell us about your experience
-            </Label>
+            <div className='flex items-center justify-between'>
+              <Label htmlFor="feedback-text" className='font-semibold text-white'>
+                Tell us about your experience
+              </Label>
+              <div className='flex items-center gap-2'>
+                <span className={`text-sm font-medium ${getCharacterCountColor(remainingChars)}`}>
+                  {remainingChars} characters remaining
+                </span>
+                <div className='w-16 h-2 bg-gray-700 rounded-full overflow-hidden'>
+                  <div 
+                    className={`h-full transition-all duration-300 ${
+                      remainingChars < 20 ? 'bg-red-500' : 
+                      remainingChars < 50 ? 'bg-yellow-500' : 'bg-blue-500'
+                    }`}
+                    style={{ width: `${((MAX_CHARACTERS - text.length) / MAX_CHARACTERS) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
             <Textarea
               id="feedback-text"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={handleTextChange}
               placeholder="What did you like? What can we improve? Any features you'd like to see?"
-              className='min-h-[150px] bg-background/80'
+              className='min-h-[150px] bg-[#1e1e2e]/80 border-gray-800/50 text-white placeholder:text-gray-500'
             />
+            <div className='text-xs text-gray-500 text-right'>
+              {text.length}/{MAX_CHARACTERS} characters
+            </div>
           </div>
 
           <Button
             type="submit"
-            disabled={isSubmitting || rating === 0 }
-            className="mt-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl 
-            hover:opacity-90 transition-opacity py-6 text-base font-semibold shadow-lg
+            disabled={isSubmitting || rating === 0 || !text.trim()}
+            className="mt-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl 
+            hover:from-blue-600 hover:to-purple-700 transition-all py-6 text-base font-semibold shadow-lg
             disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
@@ -214,29 +264,29 @@ function FeedBackFrom() {
 
       {/* Previous Feedback Section */}
       {userFeedbacks && userFeedbacks.length > 0 && (
-        <div className='glass rounded-2xl p-6'>
+        <div className='bg-gradient-to-br from-[#12121a] to-[#1a1a2e] rounded-2xl p-6 border border-gray-800/50'>
           <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-xl font-bold'>Your Previous Feedbacks</h3>
+            <h3 className='text-xl font-bold text-white'>Your Previous Feedbacks</h3>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowPreviousFeedback(!showPreviousFeedback)}
-              className="hover:text-white  border-primary/30 hover:bg-primary/10"
+              className="hover:text-white border-gray-800/50 hover:bg-blue-500/10 hover:border-blue-500/50 bg-[#1e1e2e]/80 text-gray-300"
             >
               {showPreviousFeedback ? 'Hide' : 'Show'} ({userFeedbacks.length})
             </Button>
           </div>
 
           {showPreviousFeedback && (
-            <div className='space-y-4 max-h-96 overflow-y-auto'>
+            <div className='space-y-4 max-h-96 overflow-y-auto overflow-x-hidden'>
               {userFeedbacks.map((feedback) => (
-                <Card key={feedback._id} className="glass border-border/50">
+                <Card key={feedback._id} className="bg-[#1e1e2e]/80 border-gray-800/50">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       {editingFeedback === feedback._id ? (
-                        <div className="w-full space-y-3">
+                        <div className="w-full space-y-3 ">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Rating:</span>
+                            <span className="text-sm font-medium text-white">Rating:</span>
                             <div className="flex items-center gap-1">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <button
@@ -250,7 +300,7 @@ function FeedBackFrom() {
                                   <Star
                                     className={`w-5 h-5 ${star <= (editHoverRating || editRating)
                                       ? 'text-yellow-500 fill-yellow-500'
-                                      : 'text-gray-300 fill-gray-300'
+                                      : 'text-gray-600 fill-gray-600'
                                       }`}
                                   />
                                 </button>
@@ -258,18 +308,51 @@ function FeedBackFrom() {
                             </div>
                           </div>
                           
-                          <Textarea
-                            value={editText}
-                            onChange={(e) => setEditText(e.target.value)}
-                            className="min-h-[100px] bg-background/80"
-                            placeholder="Update your feedback..."
-                          />
+                          <div className="space-y-2">
+                            <Label className="text-white">Role</Label>
+                            <Input
+                              value={editRole}
+                              onChange={(e) => setEditRole(e.target.value)}
+                              className="bg-[#0a0a0f]/80 border-gray-800/50 text-white placeholder:text-gray-500"
+                              placeholder="Update your role..."
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className='flex items-center justify-between'>
+                              <Label className="text-white">Feedback</Label>
+                              <div className='flex items-center gap-2'>
+                                <span className={`text-xs font-medium ${getCharacterCountColor(editRemainingChars)}`}>
+                                  {editRemainingChars} remaining
+                                </span>
+                                <div className='w-12 h-1.5 bg-gray-700 rounded-full overflow-hidden'>
+                                  <div 
+                                    className={`h-full transition-all duration-300 ${
+                                      editRemainingChars < 20 ? 'bg-red-500' : 
+                                      editRemainingChars < 50 ? 'bg-yellow-500' : 'bg-blue-500'
+                                    }`}
+                                    style={{ width: `${((MAX_CHARACTERS - editText.length) / MAX_CHARACTERS) * 100}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <Textarea
+                              value={editText}
+                              onChange={handleEditTextChange}
+                              className="  min-h-[100px]  bg-[#0a0a0f]/80 border-gray-800/50 text-white placeholder:text-gray-500"
+                              placeholder="Update your feedback..."
+                            />
+                            <div className='text-xs text-gray-500 hyphens-auto max-w-prose text-justify'>
+                              {editText.length}/{MAX_CHARACTERS} characters
+                            </div>
+                          </div>
+                          
                           <div className="flex items-center gap-2">
                             <Button
                               size="sm"
                               onClick={() => handleUpdateFeedback(feedback._id)}
-                              disabled={isUpdating || editRating === 0}
-                              className="gradient-primary text-white"
+                              disabled={isUpdating || editRating === 0 || !editText.trim()}
+                              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
                             >
                               {isUpdating ? (
                                 <span className="flex items-center gap-1">
@@ -291,6 +374,7 @@ function FeedBackFrom() {
                               size="sm"
                               onClick={handleCancelEdit}
                               disabled={isUpdating}
+                              className="border-gray-800/50 hover:bg-gray-800/50 text-black hover:text-white"
                             >
                               <XCircle className="w-4 h-4 mr-1" />
                               Cancel
@@ -307,16 +391,16 @@ function FeedBackFrom() {
                                     key={star}
                                     className={`w-4 h-4 ${star <= feedback.rating
                                       ? 'text-yellow-500 fill-yellow-500'
-                                      : 'text-gray-300 fill-gray-300'
+                                      : 'text-gray-600 fill-gray-600'
                                       }`}
                                   />
                                 ))}
                               </div>
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-sm text-gray-400">
                                 {feedback.rating}/5 stars
                               </span>
                             </div>
-                            <div className="px-3 py-2 glass rounded-full  hover:text-white hover:cursor-pointer flex items-center gap-4 text-xs text-muted-foreground">
+                            <div className="px-3 py-2 bg-[#0a0a0f]/80 border border-gray-800/50 rounded-full hover:text-white hover:cursor-pointer flex items-center gap-4 text-xs text-gray-400">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
                                 <span>{new Date(feedback._creationTime).toLocaleDateString()}</span>
@@ -328,7 +412,7 @@ function FeedBackFrom() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEditFeedback(feedback)}
-                              className="text-primary hover:text-primary hover:bg-primary/10 border-primary/30"
+                              className="text-blue-400 hover:text-blue-300 bg-blue-950/80 hover:bg-blue-500/50 border-blue-500/30 hover:border-blue-500/50"
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
@@ -336,7 +420,7 @@ function FeedBackFrom() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleDeleteFeedback(feedback._id)}
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+                              className="text-red-100 hover:text-red-300 bg-red-900/60 hover:bg-red-500/10 border-red-500/30 hover:border-red-500/50"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -347,10 +431,14 @@ function FeedBackFrom() {
                   </CardHeader>
                   {editingFeedback !== feedback._id && (
                     <CardContent className="pt-0">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-300 mb-2">
                         "{feedback.content}"
                       </p>
-
+                      {feedback.userRole && (
+                        <p className="text-xs text-gray-500">
+                          Role: {feedback.userRole}
+                        </p>
+                      )}
                     </CardContent>
                   )}
                 </Card>

@@ -129,7 +129,7 @@ export const updateFeedbackById = mutation({
     }
 
    
-    if (feedback.userId !== user._id) {
+    if (feedback.userId !== user.userId) {
       throw new Error("You can only edit your own feedback");
     }
 
