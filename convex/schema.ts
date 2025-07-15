@@ -42,4 +42,14 @@ export default defineSchema({
     .index("by_user_id", ["userId"])
     .index("by_snippet_id", ["snippetId"])
     .index("by_user_id_and_snippet_id", ["userId", "snippetId"]),
+
+  feedback: defineTable({
+      userId: v.string(),
+      userName: v.string(),
+      userProfileUrl: v.string(),
+      userRole: v.string(),
+      rating: v.number(),
+      content: v.string(),
+  }).index("by_user_id", ["userId"])
+    .index("by_rating", ["rating"]),
 });
