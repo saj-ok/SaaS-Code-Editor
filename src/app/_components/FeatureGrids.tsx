@@ -6,42 +6,42 @@ const FEATURES = [
     title: "Multi-Language Support",
     description: "Write and execute code in JavaScript, Python, Java, C++, Go, Rust, and more.",
     gradient: "from-blue-500 to-cyan-500",
-    delay: 0.1,
+   
   },
   {
     icon: Palette,
     title: "Beautiful Themes",
     description: "Choose from 5 carefully crafted themes including VS Dark, GitHub Dark, and Monokai.",
     gradient: "from-purple-500 to-pink-500",
-    delay: 0.2,
+   
   },
   {
     icon: Zap,
     title: "Lightning Fast",
     description: "Instant code execution with our optimized runtime environment and caching.",
     gradient: "from-yellow-500 to-orange-500",
-    delay: 0.3,
+   
   },
   {
     icon: Users,
     title: "Community Driven",
     description: "Share code snippets, collaborate with developers, and learn from the community.",
     gradient: "from-green-500 to-emerald-500",
-    delay: 0.4,
+    
   },
   {
     icon: Shield,
     title: "Secure & Private",
     description: "Your code is protected with enterprise-grade security and privacy controls.",
     gradient: "from-red-500 to-rose-500",
-    delay: 0.5,
+   
   },
   {
     icon: Sparkles,
     title: "AI-Powered",
     description: "Get intelligent code suggestions and error detection powered by advanced AI.",
     gradient: "from-indigo-500 to-purple-500",
-    delay: 0.6,
+
   },
 ]
 
