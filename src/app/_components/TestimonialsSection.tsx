@@ -127,7 +127,7 @@ function TestimonialsSection() {
               {feedbacks?.map((feedback, index) => (
                 <div key={feedback._id} >
                   <div
-                    className="h-[550px] md:h-[530px] mx-1 md:mx-5 my-6 glass hover:shadow-glow group animate-slide-up hover:scale-105 hover:shadow-lg hover:shadow-blue-300/30 transition-all duration-500 relative overflow-hidden rounded-xl"
+                    className="h-[400px] md:h-[380px] mx-1 md:mx-5 my-6 glass hover:shadow-glow group animate-slide-up hover:scale-105 hover:shadow-lg hover:shadow-blue-300/30 transition-all duration-500 relative overflow-hidden rounded-xl"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     {/* Background gradients */}
@@ -136,53 +136,59 @@ function TestimonialsSection() {
 
                     {/* Card content wrapper */}
                     <div className="p-6 relative z-10 flex flex-col h-full">
-                      {/* Main content grows */}
-                      <div className="flex-grow">
-                        <div className="flex items-center justify-between mb-6">
-                          <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={` md:w-7 md:h-7  transition-colors duration-200 ${i < feedback.rating
-                                  ? 'text-amber-400 fill-amber-400'
-                                  : 'text-muted-foreground/30'
-                                  }`}
-                              />
-                            ))}
+                      {/* Header with stars and quote mark */}
+                      <div className="flex items-start justify-between mb-6">
+                        {/* Stars */}
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-5 h-5 md:w-6 md:h-6 transition-colors duration-200 ${i < feedback.rating
+                                ? 'text-amber-400 fill-amber-400'
+                                : 'text-muted-foreground/30'
+                                }`}
+                            />
+                          ))}
+                        </div>
+                        
+                        {/* Quote mark */}
+                        <div className="text-6xl md:text-7xl font-bold text-gray-600/20 leading-none select-none">
+                          "
+                        </div>
+                      </div>
+
+                      {/* Feedback content - grows to fill space */}
+                      <div className="flex-grow mb-6">
+                        <p className="text-gray-300 text-base md:text-lg leading-relaxed text-justify hyphens-auto">
+                          "{feedback.content}"
+                        </p>
+                      </div>
+
+                      {/* User info at bottom */}
+                      <div className="flex items-center gap-4 mt-auto">
+                        <div className="relative">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                          <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-background shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                            <img
+                              src={feedback.userProfileUrl}
+                              alt={feedback.userName}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full border-2 border-background flex items-center justify-center shadow-lg">
+                            <Zap className="w-2 h-2 md:w-3 md:h-3 text-white" />
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-5 mb-6">
-                          <div className="relative">
-                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-3 border-background shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                              <img
-                                src={feedback.userProfileUrl}
-                                alt={feedback.userName}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              />
-                            </div>
-                            <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full border-3 border-background flex items-center justify-center shadow-lg">
-                              <Zap className="w-3 h-3 text-white" />
-                            </div>
-                          </div>
-
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">
-                              {feedback.userName}
-                            </h3>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg md:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 truncate">
+                            {feedback.userName}
+                          </h3>
+                          <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300 truncate">
+                            {feedback.userRole || 'Developer'}
+                          </p>
                         </div>
-                        <div className=" pt-4 relative border-t border-border">
-                          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-0.5 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
-                          <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <p className="max-w-prose text-justify hyphens-auto text-muted-foreground leading-relaxed relative z-10 p-2 group-hover:text-foreground transition-colors duration-300">
-                              "{feedback.content}"
-                            </p>
-                          </div>
-                        </div>
-                      </div> 
+                      </div>
                     </div>
 
                     {/* Decorative pings */}
