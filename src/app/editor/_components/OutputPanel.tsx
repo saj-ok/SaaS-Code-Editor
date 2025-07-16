@@ -73,21 +73,20 @@ function OutputPanel() {
 
       const aiResult = await model.generateContent(prompt);
 
-      // 1) Pull the full text string
+      
       const raw = await aiResult.response.text();
 
-      // 2) Strip markdown fences if present
+    
       const match = raw.match(/```(?:\w+)?\n([\s\S]*?)```$/);
       const onlyCode = match ? match[1].trim() : raw.trim();
 
-      // 3) Send it to console and editor
-      console.log(onlyCode);
+     
       editor?.setValue(onlyCode);
 
-      // Show success state
+      
       setAiFixComplete(true);
 
-      // Reset success state after 4 seconds
+      
       setTimeout(() => {
         setAiFixComplete(false);
       }, 4000);
