@@ -16,7 +16,7 @@ const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
 
 
 function OutputPanel() {
-  const { output, error, isRunning , editor} = useCodeEditorStore();
+  const { output, error, isRunning, editor } = useCodeEditorStore();
   const [isCopied, setIsCopied] = useState(false);
   const [isAIruning, setIsAIruning] = useState(false);
   const [aiFixComplete, setAiFixComplete] = useState(false);
@@ -31,27 +31,27 @@ function OutputPanel() {
 
     setTimeout(() => setIsCopied(false), 2000);
   };
- 
 
-const handleAIforError = async () => {
-  if (!hasContent) return;
-  setIsAIruning(true);
-  setAiFixComplete(false);
-  
-  try {
-    const errorMsg = error || "";
-    const language = localStorage.getItem("editor-language") || "javascript";
-    const code = localStorage.getItem(`editor-code-${language}`);
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-001",
-      generationConfig: {
-        temperature: 0.4,
-        topP: 0.9,
-      },
-    });
+  const handleAIforError = async () => {
+    if (!hasContent) return;
+    setIsAIruning(true);
+    setAiFixComplete(false);
 
-    const prompt = `
+    try {
+      const errorMsg = error || "";
+      const language = localStorage.getItem("editor-language") || "javascript";
+      const code = localStorage.getItem(`editor-code-${language}`);
+
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash-001",
+        generationConfig: {
+          temperature: 0.4,
+          topP: 0.9,
+        },
+      });
+
+      const prompt = `
       You are an expert ${language} developer.
       You will be given a snippet of ${language} code and the exact compiler/runtime error message it produces.
       Your job is to correct the code so that it compiles/runs without changing its original behavior.
@@ -71,35 +71,35 @@ const handleAIforError = async () => {
       Return only the corrected ${language} code, with no explanations or markdown formatting.
     `;
 
-    const aiResult = await model.generateContent(prompt);
+      const aiResult = await model.generateContent(prompt);
 
-    // 1) Pull the full text string
-    const raw = await aiResult.response.text();
+      // 1) Pull the full text string
+      const raw = await aiResult.response.text();
 
-    // 2) Strip markdown fences if present
-    const match = raw.match(/```(?:\w+)?\n([\s\S]*?)```$/);
-    const onlyCode = match ? match[1].trim() : raw.trim();
+      // 2) Strip markdown fences if present
+      const match = raw.match(/```(?:\w+)?\n([\s\S]*?)```$/);
+      const onlyCode = match ? match[1].trim() : raw.trim();
 
-    // 3) Send it to console and editor
-    console.log(onlyCode);
-    editor?.setValue(onlyCode);
+      // 3) Send it to console and editor
+      console.log(onlyCode);
+      editor?.setValue(onlyCode);
 
-     // Show success state
-    setAiFixComplete(true);
-    
-    // Reset success state after 4 seconds
-    setTimeout(() => {
-      setAiFixComplete(false);
-    }, 4000);
+      // Show success state
+      setAiFixComplete(true);
+
+      // Reset success state after 4 seconds
+      setTimeout(() => {
+        setAiFixComplete(false);
+      }, 4000);
 
 
-  } catch (e) {
-    console.error("AI error fixer failed:", e);
-     toast.error("Failed to fix error. Please try again.");
-  } finally {
-    setIsAIruning(false);
-  }
-};
+    } catch (e) {
+      console.error("AI error fixer failed:", e);
+      toast.error("Failed to fix error. Please try again.");
+    } finally {
+      setIsAIruning(false);
+    }
+  };
 
 
 
@@ -113,56 +113,99 @@ const handleAIforError = async () => {
           </div>
           <span className="text-sm font-medium text-gray-300">Output</span>
         </div>
-        
-       {/* Enhanced AI Error Fix Button */}
-      
+
+        {/* Enhanced AI Error Fix Button */}
+
         {hasContent === error && (
-          <Button 
+          <Button
             onClick={handleAIforError}
             disabled={isAIruning}
             className={`
-              relative overflow-hidden group
-              flex items-center gap-2 px-4 py-2.5 text-sm font-medium
-              rounded-xl ring-1 transition-all duration-300 ease-out
-              ${aiFixComplete 
-                ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white ring-teal-400/50 shadow-lg shadow-teal-400/25' 
-                : isAIruning 
-                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white ring-purple-400/50 shadow-lg shadow-purple-400/25' 
-                : 'bg-gradient-to-r from-slate-800 to-lime-950 text-white ring-purple-500 hover:ring-lime-400 hover:shadow-lg hover:shadow-pink-400/25 hover:from-blue-300/30 hover:to-blue-400/10'
-              }
-              transform hover:scale-105 active:scale-95
-            `}
+      ${!isAIruning && !aiFixComplete && "animated-border-button"} h-12 w-auto hover:scale-105 active:scale-95 transition-all duration-300
+    `}
           >
-            {/* Animated background gradient */}
-            <div className={`
-              absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300
-              ${aiFixComplete ? 'from-teal-300/20 to-teal-500/20' : 'from-pink-300/20 to-rose-500/20'}
-            `} />
-            
-            {/* Content */}
-            <div className="relative flex items-center gap-2">
+            <style>{`
+      @property --angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes spin {
+        from { --angle: 0deg; }
+        to   { --angle: 360deg; }
+      }
+
+      .animated-border-button {
+        position: relative;
+        padding: 3px;
+        border-radius: 1rem;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+        isolation: isolate;
+      }
+
+      .animated-border-button::before,
+      .animated-border-button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 3px;
+        border-radius: 1rem;
+        background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+        animation: spin 2.5s linear infinite;
+        z-index: -1;
+      }
+
+      .animated-border-button::before {
+        filter: blur(1.5rem);
+        opacity: 0.5;
+      }
+
+      .button-content {
+        position: relative;
+        z-index: 1;
+        background: ${aiFixComplete ? "#B6F500" : isAIruning ? "#483AA0" : "#000"}; 
+        height: 100%;
+        padding: 1rem 1rem;
+        display: flex;
+        border-radius: 1rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      }
+    `}</style>
+
+            <div className="button-content">
               {aiFixComplete ? (
                 <>
-                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-teal-300/20 animate-pulse">
-                    <CheckCircle className="w-3.5 h-3.5 text-slate-800 " />
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full animate-bounce">
+                    <CheckCircle className="w-5 h-5 text-slate-950" />
                   </div>
-                  <span className="text-slate-800 font-medium">
+                  <span className="text-slate-950 font-medium">
                     Error Fixed! Check editor & run again
                   </span>
                 </>
               ) : isAIruning ? (
                 <>
                   <div className="flex items-center justify-center w-5 h-5">
-                    <Loader className="w-4 h-4 animate-spin text-indigo-200" />
+                    <Loader className="w-5 h-5 animate-spin text-indigo-50" />
                   </div>
                   <span className="text-indigo-50 font-medium">
-                    Fixing the error
-                    <span className="text-2xl  animate-pulse">...</span>
+                    Fixing the error<span className=" animate-pulse">.....</span>
                   </span>
                 </>
               ) : (
                 <>
-                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-pink-300/20 group-hover:bg-pink-200/30 transition-colors">
+                  <div className="flex items-center justify-center w-5 h-5">
                     <Sparkles className="w-3.5 h-3.5 text-pink-200 group-hover:text-pink-100" />
                   </div>
                   <span className="text-pink-50 font-medium group-hover:text-white transition-colors">
@@ -172,14 +215,9 @@ const handleAIforError = async () => {
                 </>
               )}
             </div>
-
-            {/* Shimmer effect */}
-            {!aiFixComplete && (
-              <div className="absolute inset-0 -top-px bg-gradient-to-r from-transparent via-white/10 to-transparent \
-                            translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
-            )}
           </Button>
         )}
+
 
         {hasContent && (
           <button
@@ -210,36 +248,36 @@ const handleAIforError = async () => {
         >
           <SignedIn>
             {isRunning ? (
-            <RunningCodeSkeleton />
-          ) : error ? (
-            <div className="flex items-start gap-3 text-red-400">
-              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-1" />
-              <div className="space-y-1">
-                <div className="font-medium">Execution Error</div>
-                <pre className="whitespace-pre-wrap text-red-400/80">{error}</pre>
+              <RunningCodeSkeleton />
+            ) : error ? (
+              <div className="flex items-start gap-3 text-red-400">
+                <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-1" />
+                <div className="space-y-1">
+                  <div className="font-medium">Execution Error</div>
+                  <pre className="whitespace-pre-wrap text-red-400/80">{error}</pre>
+                </div>
               </div>
-            </div>
-          ) : output ? (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-emerald-400 mb-3">
-                <CheckCircle className="w-5 h-5" />
-                <span className="font-medium">Execution Successful</span>
+            ) : output ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-emerald-400 mb-3">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-medium">Execution Successful</span>
+                </div>
+                <pre className="whitespace-pre-wrap text-gray-300">{output}</pre>
               </div>
-              <pre className="whitespace-pre-wrap text-gray-300">{output}</pre>
-            </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center text-gray-500">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-800/50 ring-1 ring-gray-700/50 mb-4">
-                <Clock className="w-6 h-6" />
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-800/50 ring-1 ring-gray-700/50 mb-4">
+                  <Clock className="w-6 h-6" />
+                </div>
+                <p className="text-center">Run your code to see the output here...</p>
               </div>
-              <p className="text-center">Run your code to see the output here...</p>
-            </div>
-          )}
+            )}
           </SignedIn>
           <SignedOut>
             <div className="h-full flex flex-col items-center justify-center text-gray-400">
               <p className="text-center mb-5 ">Sign in to Run your code and see the output here...</p>
-               <LoginButton  />
+              <LoginButton />
             </div>
           </SignedOut>
         </div>
