@@ -1,16 +1,24 @@
 "use client";
 
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { AlertTriangle, CheckCircle, Clock, Copy, Terminal } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Copy, Loader, Terminal } from "lucide-react";
 import { useState } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import toast from "react-hot-toast";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import LoginButton from "@/components/LoginButton";
+import { Button } from "@/components/ui/button";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+
+
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+
 
 function OutputPanel() {
-  const { output, error, isRunning } = useCodeEditorStore();
+  const { output, error, isRunning , editor} = useCodeEditorStore();
   const [isCopied, setIsCopied] = useState(false);
+  const [isAIruning, setIsAIruning] = useState(false);
 
   const hasContent = error || output;
 
@@ -22,6 +30,66 @@ function OutputPanel() {
 
     setTimeout(() => setIsCopied(false), 2000);
   };
+ 
+
+const handleAIforError = async () => {
+  if (!hasContent) return;
+  setIsAIruning(true);
+  console.log('clicked');
+  try {
+    const errorMsg = error || "";
+    const language = localStorage.getItem("editor-language") || "javascript";
+    const code = localStorage.getItem(`editor-code-${language}`);
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash-001",
+      generationConfig: {
+        temperature: 0.4,
+        topP: 0.9,
+      },
+    });
+
+    const prompt = `
+      You are an expert ${language} developer.
+      You will be given a snippet of ${language} code and the exact compiler/runtime error message it produces.
+      Your job is to correct the code so that it compiles/runs without changing its original behavior.
+
+      Language: ${language}
+
+      Original Code:
+      \`\`\`${language}
+      ${code}
+      \`\`\`
+
+      Error Message:
+      \`\`\`
+      ${errorMsg}
+      \`\`\`
+
+      Return only the corrected ${language} code, with no explanations or markdown formatting.
+    `;
+
+    const aiResult = await model.generateContent(prompt);
+
+    // 1) Pull the full text string
+    const raw = await aiResult.response.text();
+
+    // 2) Strip markdown fences if present
+    const match = raw.match(/```(?:\w+)?\n([\s\S]*?)```$/);
+    const onlyCode = match ? match[1].trim() : raw.trim();
+
+    // 3) Send it to console and editor
+    console.log(onlyCode);
+    editor?.setValue(onlyCode);
+
+  } catch (e) {
+    console.error("AI error fixer failed:", e);
+  } finally {
+    setIsAIruning(false);
+  }
+};
+
+
 
   return (
     <div className="relative bg-[#181825] rounded-xl p-4 ring-1 ring-gray-800/50">
@@ -33,6 +101,28 @@ function OutputPanel() {
           </div>
           <span className="text-sm font-medium text-gray-300">Output</span>
         </div>
+        
+        {/* solve error using AI */}
+       {hasContent === error && (
+          <Button 
+           onClick={handleAIforError}
+           className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-gray-400 hover:text-gray-300 bg-[#343467] 
+            rounded-lg ring-1 ring-gray-800/50 hover:ring-gray-700/50 transition-all"
+           >
+             {isAIruning ? (
+               <><Loader className="animate-spin w-5 h-5 mr-2 text-blue-400"/>
+                    Fixing the error<span className="animate-pulse">...</span>
+               </>
+             )
+            :
+            (
+              <> 
+                <AlertTriangle className="w-5 h-5 mr-2 text-yellow-400"/>
+              Solve Error Using AI
+              </>
+            )}
+          </Button>
+       )} 
 
         {hasContent && (
           <button

@@ -10,8 +10,6 @@ import Image from "next/image";
 import FeatureGrids from "./FeatureGrids";
 
 
-
-
 const LANGUAGES = [
   { name: "JavaScript", icon: "/javascript.png", color: "bg-yellow-500/20" },
   { name: "Python", icon: "/python.png", color: "bg-blue-500/20" },
