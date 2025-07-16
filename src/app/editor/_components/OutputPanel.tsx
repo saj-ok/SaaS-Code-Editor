@@ -1,7 +1,7 @@
 "use client";
 
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { AlertTriangle, CheckCircle, Clock, Copy, Loader, Terminal } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, Copy, Loader, Sparkles, Terminal, Zap } from "lucide-react";
 import { useState } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ function OutputPanel() {
   const { output, error, isRunning , editor} = useCodeEditorStore();
   const [isCopied, setIsCopied] = useState(false);
   const [isAIruning, setIsAIruning] = useState(false);
+  const [aiFixComplete, setAiFixComplete] = useState(false);
 
   const hasContent = error || output;
 
@@ -35,7 +36,8 @@ function OutputPanel() {
 const handleAIforError = async () => {
   if (!hasContent) return;
   setIsAIruning(true);
-  console.log('clicked');
+  setAiFixComplete(false);
+  
   try {
     const errorMsg = error || "";
     const language = localStorage.getItem("editor-language") || "javascript";
@@ -82,8 +84,18 @@ const handleAIforError = async () => {
     console.log(onlyCode);
     editor?.setValue(onlyCode);
 
+     // Show success state
+    setAiFixComplete(true);
+    
+    // Reset success state after 4 seconds
+    setTimeout(() => {
+      setAiFixComplete(false);
+    }, 4000);
+
+
   } catch (e) {
     console.error("AI error fixer failed:", e);
+     toast.error("Failed to fix error. Please try again.");
   } finally {
     setIsAIruning(false);
   }
@@ -102,27 +114,72 @@ const handleAIforError = async () => {
           <span className="text-sm font-medium text-gray-300">Output</span>
         </div>
         
-        {/* solve error using AI */}
-       {hasContent === error && (
+       {/* Enhanced AI Error Fix Button */}
+      
+        {hasContent === error && (
           <Button 
-           onClick={handleAIforError}
-           className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-gray-400 hover:text-gray-300 bg-[#343467] 
-            rounded-lg ring-1 ring-gray-800/50 hover:ring-gray-700/50 transition-all"
-           >
-             {isAIruning ? (
-               <><Loader className="animate-spin w-5 h-5 mr-2 text-blue-400"/>
-                    Fixing the error<span className="animate-pulse">...</span>
-               </>
-             )
-            :
-            (
-              <> 
-                <AlertTriangle className="w-5 h-5 mr-2 text-yellow-400"/>
-              Solve Error Using AI
-              </>
+            onClick={handleAIforError}
+            disabled={isAIruning}
+            className={`
+              relative overflow-hidden group
+              flex items-center gap-2 px-4 py-2.5 text-sm font-medium
+              rounded-xl ring-1 transition-all duration-300 ease-out
+              ${aiFixComplete 
+                ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white ring-teal-400/50 shadow-lg shadow-teal-400/25' 
+                : isAIruning 
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white ring-purple-400/50 shadow-lg shadow-purple-400/25' 
+                : 'bg-gradient-to-r from-slate-800 to-lime-950 text-white ring-purple-500 hover:ring-lime-400 hover:shadow-lg hover:shadow-pink-400/25 hover:from-blue-300/30 hover:to-blue-400/10'
+              }
+              transform hover:scale-105 active:scale-95
+            `}
+          >
+            {/* Animated background gradient */}
+            <div className={`
+              absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300
+              ${aiFixComplete ? 'from-teal-300/20 to-teal-500/20' : 'from-pink-300/20 to-rose-500/20'}
+            `} />
+            
+            {/* Content */}
+            <div className="relative flex items-center gap-2">
+              {aiFixComplete ? (
+                <>
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-teal-300/20 animate-pulse">
+                    <CheckCircle className="w-3.5 h-3.5 text-slate-800 " />
+                  </div>
+                  <span className="text-slate-800 font-medium">
+                    Error Fixed! Check editor & run again
+                  </span>
+                </>
+              ) : isAIruning ? (
+                <>
+                  <div className="flex items-center justify-center w-5 h-5">
+                    <Loader className="w-4 h-4 animate-spin text-indigo-200" />
+                  </div>
+                  <span className="text-indigo-50 font-medium">
+                    Fixing the error
+                    <span className="text-2xl  animate-pulse">...</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-pink-300/20 group-hover:bg-pink-200/30 transition-colors">
+                    <Sparkles className="w-3.5 h-3.5 text-pink-200 group-hover:text-pink-100" />
+                  </div>
+                  <span className="text-pink-50 font-medium group-hover:text-white transition-colors">
+                    Fix Error with AI
+                  </span>
+                  <Zap className="w-3.5 h-3.5 text-pink-200 group-hover:text-pink-100 opacity-70 group-hover:opacity-100 transition-all" />
+                </>
+              )}
+            </div>
+
+            {/* Shimmer effect */}
+            {!aiFixComplete && (
+              <div className="absolute inset-0 -top-px bg-gradient-to-r from-transparent via-white/10 to-transparent \
+                            translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
             )}
           </Button>
-       )} 
+        )}
 
         {hasContent && (
           <button
