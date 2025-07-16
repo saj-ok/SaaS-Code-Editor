@@ -175,3 +175,14 @@
       @apply bg-background text-foreground;
     }
   }
+
+
+  @keyframes loader-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loader-spin {
+    animation: loader-rotate 1s linear infinite;
+  }

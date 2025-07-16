@@ -121,85 +121,97 @@ function OutputPanel() {
             onClick={handleAIforError}
             disabled={isAIruning}
             className={`
-      ${!isAIruning && !aiFixComplete && "animated-border-button"} h-12 w-auto hover:scale-105 active:scale-95 transition-all duration-300
-    `}
+               animated-border-button h-12 w-auto hover:scale-105 active:scale-95 transition-all duration-300`}
           >
             <style>{`
-      @property --angle {
-        syntax: "<angle>";
-        initial-value: 0deg;
-        inherits: false;
-      }
+                @property --angle {
+                  syntax: "<angle>";
+                  initial-value: 0deg;
+                  inherits: false;
+                }
 
-      @keyframes fadeInUp {
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+                @keyframes fadeInUp {
+                  to {
+                    opacity: 1;
+                    transform: translateY(0);
+                  }
+                }
 
-      @keyframes spin {
-        from { --angle: 0deg; }
-        to   { --angle: 360deg; }
-      }
+                @keyframes spin {
+                  from { --angle: 0deg; }
+                  to   { --angle: 360deg; }
+                }
 
-      .animated-border-button {
-        position: relative;
-        padding: 3px;
-        border-radius: 1rem;
-        opacity: 0;
-        animation: fadeInUp 0.6s ease-out forwards;
-        isolation: isolate;
-      }
+                .animated-border-button {
+                  position: relative;
+                  padding: 3px;
+                  border-radius: 1rem;
+                  opacity: 0;
+                  animation: fadeInUp 0.6s ease-out forwards;
+                  isolation: isolate;
+                }
 
-      .animated-border-button::before,
-      .animated-border-button::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        padding: 3px;
-        border-radius: 1rem;
-        background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
-        animation: spin 2.5s linear infinite;
-        z-index: -1;
-      }
+                .animated-border-button::before,
+                .animated-border-button::after {
+                  content: "";
+                  position: absolute;
+                  inset: 0;
+                  padding: 3px;
+                  border-radius: 1rem;
+                  background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+                  animation: spin 2.5s linear infinite;
+                  z-index: -1;
+                }
 
-      .animated-border-button::before {
-        filter: blur(1.5rem);
-        opacity: 0.5;
-      }
+                .animated-border-button::before {
+                  filter: blur(1.5rem);
+                  opacity: 0.5;
+                }
 
-      .button-content {
-        position: relative;
-        z-index: 1;
-        background: ${aiFixComplete ? "#B6F500" : isAIruning ? "#483AA0" : "#000"}; 
-        height: 100%;
-        padding: 1rem 1rem;
-        display: flex;
-        border-radius: 1rem;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-      }
-    `}</style>
+                .button-content {
+                  position: relative;
+                  z-index: 1;
+                  background: #000; 
+                  height: 100%;
+                  padding: 1rem 1rem;
+                  display: flex;
+                  border-radius: 1rem;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 1rem;
+                }
+                .loader{
+                  width: 1em;
+                  height: 1em;
+                  margin-right: 0.5em;
+                  border-radius: 50%;
+                  border-width: 0.2em;
+                  border-style: solid;
+                  border-color: transparent rgba(255, 255, 255, 0.3);
+                  animation-name: loader-animation;
+                  animation-duration: 1s;
+                  animation-timing-function: cubic-bezier(.4,.0,.6,1);
+                  animation-fill-mode: both;
+                }
+              `}</style>
 
             <div className="button-content">
               {aiFixComplete ? (
                 <>
                   <div className="flex items-center justify-center w-5 h-5 rounded-full animate-bounce">
-                    <CheckCircle className="w-5 h-5 text-slate-950" />
+                    <CheckCircle className="w-5 h-5 text-green-500" />
                   </div>
-                  <span className="text-slate-950 font-medium">
+                  <span className="text-green-500 font-medium">
                     Error Fixed! Check editor & run again
                   </span>
                 </>
               ) : isAIruning ? (
                 <>
-                  <div className="flex items-center justify-center w-5 h-5">
-                    <Loader className="w-5 h-5 animate-spin text-indigo-50" />
+                 
+                  <div className="flex items-center justify-center w-7 h-7">
+                    <Loader className="w-7 h-7 text-blue-100 loader-spin" />
                   </div>
-                  <span className="text-indigo-50 font-medium">
+                  <span className="text-blue-300 font-medium">
                     Fixing the error<span className=" animate-pulse">.....</span>
                   </span>
                 </>
