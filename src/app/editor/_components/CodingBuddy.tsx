@@ -229,6 +229,7 @@ function CodingBuddy() {
       isUser: false,
       timestamp: new Date(),
     }]);
+    toast.success('Chat cleared');
   };
 
   // Render message content with code block placeholders replaced
