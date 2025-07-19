@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
-import {Code2,Code, Sparkles } from "lucide-react";
+import {Code2, Sparkles } from "lucide-react";
 import { SignedIn } from "@clerk/nextjs";
 import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
@@ -60,7 +60,7 @@ async function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center space-x-1">
+          <nav className="flex items-center space-x-10">
             <Link
               href="/snippets"
               className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 
