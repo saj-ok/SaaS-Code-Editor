@@ -315,7 +315,7 @@ function CodingBuddy() {
     <>
       {/* Trigger Button */}
       <Button
-        className="animated-border-button"
+        className="animated-brdr-button"
         onClick={() => setIsOpen(true)}
       >
         <style>{`
@@ -337,7 +337,7 @@ function CodingBuddy() {
             to   { --angle: 360deg; }
           }
 
-          .animated-border-button {
+          .animated-brdr-button {
             position: relative;
             padding: 3px;
             border-radius: 1rem;
@@ -346,8 +346,8 @@ function CodingBuddy() {
             isolation: isolate;
           }
 
-          .animated-border-button:hover::before,
-          .animated-border-button:hover::after {
+          .animated-brdr-button:hover::before,
+          .animated-brdr-button:hover::after {
             content: "";
             position: absolute;
             inset: 0;
@@ -358,7 +358,7 @@ function CodingBuddy() {
             z-index: -1;
           }
 
-          .animated-border-button:hover::before {
+          .animated-brdr-button:hover::before {
             filter: blur(1.5rem);
             opacity: 0.5;
           }
