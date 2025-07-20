@@ -64,3 +64,17 @@ export interface Snippet {
   title: string;
   userName: string;
 }
+
+export interface Message {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: Date;
+  codeBlocks?: CodeBlock[];
+}
+
+export interface CodeBlock {
+  language: string;
+  code: string;
+  id: string;
+}
