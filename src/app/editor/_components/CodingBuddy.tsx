@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { CodeBlock, Message } from '@/types';
 import AIMessage from './AIMessage';
-import { GeminiRateLimiter } from '@/lib/rateLimiter';
+import { useGeminiStore } from '@/store/useGeminiStore';
 import RateLimitModal from '@/components/RateLimitModal';
 
 
@@ -21,18 +21,20 @@ function CodingBuddy() {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showRateLimitModal, setShowRateLimitModal] = useState(false);
-  const [rateLimitInfo, setRateLimitInfo] = useState({
-    resetTime: 0,
-    currentCount: 0,
-    maxLimit: 20
-  });
 
   // Refs for auto-scrolling and input focus
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { language } = useCodeEditorStore();
-  const rateLimiter = GeminiRateLimiter.getInstance();
+  const { 
+    canMakeRequest, 
+    incrementUsage, 
+    getResetTime, 
+    getCurrentCount, 
+    maxDailyLimit,
+    initializeFromStorage 
+  } = useGeminiStore();
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -45,6 +47,11 @@ function CodingBuddy() {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // Initialize from storage on mount
+  useEffect(() => {
+    initializeFromStorage();
+  }, [initializeFromStorage]);
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -85,12 +92,7 @@ function CodingBuddy() {
     if (!inputMessage.trim() || isLoading) return;
 
     // Check rate limit before making request
-    if (!rateLimiter.canMakeRequest()) {
-      setRateLimitInfo({
-        resetTime: rateLimiter.getResetTime(),
-        currentCount: rateLimiter.getCurrentCount(),
-        maxLimit: 20
-      });
+    if (!canMakeRequest()) {
       setShowRateLimitModal(true);
       return;
     }
@@ -108,8 +110,8 @@ function CodingBuddy() {
     setIsLoading(true);
 
     try {
-      // Increment rate limit counter
-      rateLimiter.incrementCount();
+      // Increment usage counter
+      incrementUsage();
 
       // Configure Gemini model for coding assistance
       const model = genAI.getGenerativeModel({
@@ -410,9 +412,9 @@ function CodingBuddy() {
       <RateLimitModal
         isOpen={showRateLimitModal}
         onClose={() => setShowRateLimitModal(false)}
-        resetTime={rateLimitInfo.resetTime}
-        currentCount={rateLimitInfo.currentCount}
-        maxLimit={rateLimitInfo.maxLimit}
+        resetTime={getResetTime()}
+        currentCount={getCurrentCount()}
+        maxLimit={maxDailyLimit}
       />
     </>
   );

@@ -1,19 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GeminiRateLimiter } from "@/lib/rateLimiter";
+import { useGeminiStore } from "@/store/useGeminiStore";
 import { Zap, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 function RateLimitIndicator() {
-  const [remaining, setRemaining] = useState(20);
+  const { 
+    getRemainingRequests, 
+    getResetTime, 
+    maxDailyLimit,
+    initializeFromStorage 
+  } = useGeminiStore();
+  
+  const [remaining, setRemaining] = useState(maxDailyLimit);
   const [resetTime, setResetTime] = useState(0);
-  const rateLimiter = GeminiRateLimiter.getInstance();
 
   useEffect(() => {
+    // Initialize from storage first
+    initializeFromStorage();
+    
     const updateInfo = () => {
-      setRemaining(rateLimiter.getRemainingRequests());
-      setResetTime(rateLimiter.getResetTime());
+      setRemaining(getRemainingRequests());
+      setResetTime(getResetTime());
     };
 
     updateInfo();
@@ -22,7 +31,7 @@ function RateLimitIndicator() {
     const interval = setInterval(updateInfo, 60000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [getRemainingRequests, getResetTime, initializeFromStorage]);
 
   const getTimeUntilReset = () => {
     const now = Date.now();
@@ -37,7 +46,7 @@ function RateLimitIndicator() {
     return `${minutes}m`;
   };
 
-  const percentage = (remaining / 20) * 100;
+  const percentage = (remaining / maxDailyLimit) * 100;
   const isLow = remaining <= 5;
   const isEmpty = remaining === 0;
 
@@ -49,7 +58,7 @@ function RateLimitIndicator() {
         </div>
         <div className="text-xs">
           <div className={`font-medium ${isEmpty ? 'text-red-400' : isLow ? 'text-yellow-400' : 'text-gray-300'}`}>
-            {remaining}/20 AI requests
+            {remaining}/{maxDailyLimit} AI requests
           </div>
           <div className="flex items-center gap-1 text-gray-500">
             <Clock className="w-3 h-3" />

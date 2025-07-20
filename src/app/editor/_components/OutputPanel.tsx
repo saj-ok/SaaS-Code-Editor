@@ -10,6 +10,8 @@ import LoginButton from "@/components/LoginButton";
 import { Button } from "@/components/ui/button";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+import { useGeminiStore } from "@/store/useGeminiStore";
+import RateLimitModal from "@/components/RateLimitModal";
 
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
@@ -20,6 +22,21 @@ function OutputPanel() {
   const [isCopied, setIsCopied] = useState(false);
   const [isAIruning, setIsAIruning] = useState(false);
   const [aiFixComplete, setAiFixComplete] = useState(false);
+  const [showRateLimitModal, setShowRateLimitModal] = useState(false);
+
+  const { 
+    canMakeRequest, 
+    incrementUsage, 
+    getResetTime, 
+    getCurrentCount, 
+    maxDailyLimit,
+    initializeFromStorage 
+  } = useGeminiStore();
+
+  // Initialize from storage on mount
+  useEffect(() => {
+    initializeFromStorage();
+  }, [initializeFromStorage]);
 
   const hasContent = error || output;
 
@@ -35,10 +52,20 @@ function OutputPanel() {
 
   const handleAIforError = async () => {
     if (!hasContent) return;
+    
+    // Check rate limit before making request
+    if (!canMakeRequest()) {
+      setShowRateLimitModal(true);
+      return;
+    }
+    
     setIsAIruning(true);
     setAiFixComplete(false);
 
     try {
+      // Increment usage counter
+      incrementUsage();
+      
       const errorMsg = error || "";
       const language = localStorage.getItem("editor-language") || "javascript";
       const code = localStorage.getItem(`editor-code-${language}`);
@@ -293,6 +320,15 @@ function OutputPanel() {
           </SignedOut>
         </div>
       </div>
+      
+      {/* Rate Limit Modal */}
+      <RateLimitModal
+        isOpen={showRateLimitModal}
+        onClose={() => setShowRateLimitModal(false)}
+        resetTime={getResetTime()}
+        currentCount={getCurrentCount()}
+        maxLimit={maxDailyLimit}
+      />
     </div>
   );
 }
