@@ -267,7 +267,7 @@ function CodingBuddy() {
                 <Code className="w-4 h-4 text-blue-400" />
                 <span className="text-sm text-gray-400">{block.language}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-5">
                 <button
                   onClick={() => handleCopyCode(block.code, block.id)}
                   className="p-1.5 hover:bg-gray-800 rounded transition-colors hover:scale-105"
@@ -281,7 +281,7 @@ function CodingBuddy() {
                 </button>
                 <button
                   onClick={() => handleInsertCode(block.code)}
-                  className="flex items-center gap-1 px-2 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded text-xs transition-all hover:scale-105"
+                  className="flex rounded-xl items-center gap-1 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400  text-xs transition-all hover:scale-105"
                   title="Insert into editor"
                 >
                   <Plus className="w-3 h-3" />
@@ -393,7 +393,7 @@ function CodingBuddy() {
             className="mt-96 fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setIsOpen(false)}
           >
-            <motion.div
+            <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -401,7 +401,7 @@ function CodingBuddy() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Dialog Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-800/50 bg-gradient-to-r from-blue-500/5 to-purple-500/5">
+              <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-gray-800/50 bg-gradient-to-r from-blue-500/5 to-purple-500/5">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl">
                     <Brain className="w-6 h-6 text-blue-400" />
