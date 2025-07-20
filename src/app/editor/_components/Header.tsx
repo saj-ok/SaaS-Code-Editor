@@ -10,6 +10,7 @@ import RunButton from "./RunButton";
 import HeaderProfileBtn from "./HeaderProfileBtn";
 import Image from "next/image";
 import CodingBuddy from "./CodingBuddy";
+import RateLimitIndicator from "@/components/RateLimitIndicator";
 
 async function Header() {
   const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -86,6 +87,7 @@ async function Header() {
           <div className="flex items-center gap-3">
             <ThemeSelector />
             <LanguageSelector hasAccess={Boolean(convexUser?.isPro)} />
+            <RateLimitIndicator />
           </div>
 
           {!convexUser?.isPro && (
